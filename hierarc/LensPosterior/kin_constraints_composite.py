@@ -3,6 +3,9 @@ import copy
 import numpy as np
 from hierarc.LensPosterior.kin_constraints import KinConstraints
 
+from lenstronomy.LensModel.Profiles.nfw import NFW
+from lenstronomy.Cosmo.nfw_param import NFWParam
+
 
 class KinConstraintsComposite(KinConstraints):
     def __init__(
@@ -29,6 +32,7 @@ class KinConstraintsComposite(KinConstraints):
         sigma_v_error_covariant=None,
         sigma_v_error_cov_matrix=None,
         kwargs_lens_light=None,
+        kwargs_lens_light_error=None,
         lens_light_model_list=["HERNQUIST"],
         lens_model_list=None,
         MGE_light=False,
@@ -96,6 +100,7 @@ class KinConstraintsComposite(KinConstraints):
             sigma_v_error_covariant=sigma_v_error_covariant,
             sigma_v_error_cov_matrix=sigma_v_error_cov_matrix,
             kwargs_lens_light=kwargs_lens_light,
+            kwargs_lens_light_error=kwargs_lens_light_error,
             lens_light_model_list=lens_light_model_list,
             lens_model_list=lens_model_list,
             MGE_light=MGE_light,
@@ -116,7 +121,10 @@ class KinConstraintsComposite(KinConstraints):
         :param r_scale: halo scale radius in arc seconds
         :return: surface mass density divided by the critical density
         """
-        return m200 * r_scale  # placeholder, To-do
+        c = NFWParam().c_M_z(m200, self._z_lens)
+        rho0 = NFWParam().rho0_c(c, self._z_lens)
+        kappa = NFW().density_2d(0, Rs, Rs, rho0, center_x=0, center_y=0)
+        return kappa
 
     def j_kin_draw_composite(self, kwargs_anisotropy, gamma_in, m2l, no_error=False):
         """One simple sampling realization of the dimensionless kinematics of the model.
@@ -128,7 +136,7 @@ class KinConstraintsComposite(KinConstraints):
             the mean values instead
         :return: dimensionless kinematic component J() Birrer et al. 2016, 2019
         """
-        m200_draw, r_scale_draw, r_eff_draw, delta_r_eff = self.draw_lens(
+        m200_draw, r_scale_draw, r_eff_draw, delta_r_eff = self.draw_lens_nfw(
             no_error=no_error
         )
         kappa_s = self.get_kappa_s(m200_draw, r_scale_draw)

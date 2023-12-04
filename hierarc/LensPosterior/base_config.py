@@ -24,6 +24,7 @@ class BaseLensConfig(TDCosmography, ImageModelPosterior, AnisotropyConfig):
         anisotropy_model,
         lens_model_list=None,
         kwargs_lens_light=None,
+        kwargs_lens_light_error=None
         lens_light_model_list=["HERNQUIST"],
         MGE_light=False,
         kwargs_mge_light=None,
@@ -94,6 +95,7 @@ class BaseLensConfig(TDCosmography, ImageModelPosterior, AnisotropyConfig):
         )
         self._kwargs_lens_light = kwargs_lens_light
         ImageModelPosterior.__init__(
-            self, theta_E, theta_E_error, gamma, gamma_error, r_eff, r_eff_error
+            self, theta_E, theta_E_error, gamma, gamma_error, r_eff, r_eff_error, 
+            lens_light_model_list=lens_light_model_list, kwargs_lens_light=kwargs_lens_light, kwargs_lens_light_error=kwargs_lens_light_error
         )
         AnisotropyConfig.__init__(self, anisotropy_model, r_eff)
