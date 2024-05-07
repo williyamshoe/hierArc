@@ -98,6 +98,9 @@ class ParameterScalingIFU(object):
                     self._log_m2l_min = np.min(param_arrays[2])
                     self._log_m2l_max = np.max(param_arrays[2])
                     self._is_log_m2l_population_level = True
+                if self._dim_scaling > 3:
+                    self._m2l_grad_min = np.min(param_arrays[3])
+                    self._m2l_grad_max = np.max(param_arrays[3])
 
             elif anisotropy_model == "GOM":
                 self._ani_param_min = [min(param_arrays[0]), min(param_arrays[1])]
@@ -178,7 +181,7 @@ class ParameterScalingIFU(object):
         return None
 
     def draw_lens_parameters(
-        self, gamma_in=None, gamma_in_sigma=0, log_m2l=None, log_m2l_sigma=0
+        self, gamma_in=None, gamma_in_sigma=0, log_m2l=None, log_m2l_sigma=0, m2l_grad=None, m2l_grad_sigma=0
     ):
         """Draw Gaussian distribution and re-sample if outside bounds.
 
@@ -198,6 +201,12 @@ class ParameterScalingIFU(object):
                     "m2l parameter is out of bounds of the interpolated range!"
                 )
 
+            if m2l_grad < self._m2l_grad_min or m2l_grad > self._m2l_grad_max:
+                raise ValueError(
+                    "m2l_grad parameter is out of bounds of the interpolated range!"
+                )
+
+            m2l_grad_draw = np.random.normal(m2l_grad, m2l_grad_sigma)
             gamma_in_draw = np.random.normal(gamma_in, gamma_in_sigma)
             log_m2l_draw = np.random.normal(log_m2l, log_m2l_sigma)
 

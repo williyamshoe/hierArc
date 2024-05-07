@@ -9,13 +9,14 @@ from lenstronomy.Analysis.light_profile import LightProfileAnalysis
 from lenstronomy.LightModel.light_model import LightModel
 
 
-class KinConstraintsComposite(KinConstraints):
+class KinConstraintsCompositeGradient(KinConstraints):
     def __init__(
         self,
         z_lens,
         z_source,
         gamma_in_array,
         log_m2l_array,
+        m2l_gradient_array,
         kappa_s_array,
         r_s_angle_array,
         theta_E,
@@ -113,9 +114,13 @@ class KinConstraintsComposite(KinConstraints):
             lens_light_model_list = ["MULTI_GAUSSIAN"]
             kwargs_lens_light = [{"amp": amps, "sigma": sigmas}]
 
+        self.orig_kwargs_lens_light = copy.deepcopy(kwargs_lens_light)
+        self.orig_r_eff = r_eff
+        self.orig_kwargs_mge_light = copy.deepcopy(kwargs_mge_light)
+
         lens_model_list = ["GNFW", "MULTI_GAUSSIAN_KAPPA"]
 
-        super(KinConstraintsComposite, self).__init__(
+        super(KinConstraintsCompositeGradient, self).__init__(
             z_lens,
             z_source,
             theta_E,
@@ -158,6 +163,7 @@ class KinConstraintsComposite(KinConstraints):
 
         self.gamma_in_array = gamma_in_array
         self.log_m2l_array = log_m2l_array
+        self.m2l_gradient_array = m2l_gradient_array
         self._is_m2l_population_level = is_m2l_population_level
 
         self._gamma_in_prior_mean = gamma_in_prior_mean
@@ -256,6 +262,7 @@ class KinConstraintsComposite(KinConstraints):
                     self.kwargs_anisotropy_base,
                     np.mean(self.gamma_in_array),
                     np.mean(self.log_m2l_array),
+                    np.mean(self.m2l_gradient),
                     no_error=False,
                 )
             else:
@@ -271,7 +278,7 @@ class KinConstraintsComposite(KinConstraints):
         return j_model_list, error_cov_j_sqrt
 
     def j_kin_draw_composite(
-        self, kwargs_anisotropy, gamma_in, log_m2l, no_error=False
+        self, kwargs_anisotropy, gamma_in, log_m2l, special_kwargs_lens_light=None, no_error=False
     ):
         """One simple sampling realization of the dimensionless kinematics of the model.
 
@@ -286,7 +293,10 @@ class KinConstraintsComposite(KinConstraints):
             no_error=no_error
         )
 
-        kwargs_lens_stars = copy.deepcopy(self._kwargs_lens_light[0])
+        if special_kwargs_lens_light is None:
+            kwargs_lens_stars = copy.deepcopy(self._kwargs_lens_light[0])
+        else:
+            kwargs_lens_stars = copy.deepcopy(special_kwargs_lens_light)
 
         kwargs_lens_stars["amp"] *= 10**log_m2l / self.lensCosmo.sigma_crit_angle
 
@@ -337,7 +347,7 @@ class KinConstraintsComposite(KinConstraints):
 
         kwargs_lens_stars = copy.deepcopy(self._kwargs_lens_light[0])
 
-        kwargs_lens_stars["amp"] *= 10**log_m2l_draw / self.lensCosmo.sigma_crit_angle
+        kwargs_lens_stars["amp"] *= log_m2l_draw / self.lensCosmo.sigma_crit_angle
 
         kwargs_lens_stars["sigma"] *= delta_r_eff
 
@@ -395,6 +405,7 @@ class KinConstraintsComposite(KinConstraints):
             "ani_param_array": self.ani_param_array,
             "gamma_in_array": self.gamma_in_array,
             "log_m2l_array": self.log_m2l_array,
+            "m2l_gradient_array": self.m2l_gradient_array,
             "param_scaling_grid_list": ani_scaling_grid_list,
             "gamma_in_prior_mean": self._gamma_in_prior_mean,
             "gamma_in_prior_std": self._gamma_in_prior_std,
@@ -413,6 +424,7 @@ class KinConstraintsComposite(KinConstraints):
             j_ani_0 = self.j_kin_draw_composite(
                 self.kwargs_anisotropy_base,
                 np.mean(self.gamma_in_array),
+                np.mean(self.m2l_gradient_array),
                 np.mean(self.log_m2l_array),
                 no_error=True,
             )
@@ -469,19 +481,40 @@ class KinConstraintsComposite(KinConstraints):
                         len(self.ani_param_array),
                         len(self.gamma_in_array),
                         len(self.log_m2l_array),
+                        len(self.m2l_gradient_array),
                     )
                 )
                 for _ in range(num_data)
             ]
+
+            m2l_grads_params = {}
+
             for i, a_ani in enumerate(self.ani_param_array):
                 for k, g_in in enumerate(self.gamma_in_array):
                     for l, log_m2l in enumerate(self.log_m2l_array):
-                        kwargs_anisotropy = self.anisotropy_kwargs(a_ani)
-                        j_kin_ani = self.j_kin_draw_composite(
-                            kwargs_anisotropy, g_in, log_m2l, no_error=True
-                        )
-                        for m, j_kin in enumerate(j_kin_ani):
-                            ani_scaling_grid_list[m][i, k, l] = j_kin / j_ani_0[m]
+                        for h, m2l_grad in enumerate(self.m2l_gradient_array):
+                            if m2l_grad in m2l_grads_params:
+                                special_kwargs_lens_light = m2l_grads_params[m2l_grad]
+                            else:
+                                (
+                                    amps,
+                                    sigmas,
+                                    center_x,
+                                    center_y,
+                                ) = self._light_profile_analysis.multi_gaussian_decomposition(
+                                    self.orig_kwargs_lens_light, r_h=self.orig_r_eff, m2l_grad=m2l_grad,
+                                    **self.orig_kwargs_mge_light
+                                )
+
+                                special_kwargs_lens_light = {"amp": amps, "sigma": sigmas}
+                                m2l_grads_params[m2l_grad] = copy.deepcopy(special_kwargs_lens_light)
+
+                            kwargs_anisotropy = self.anisotropy_kwargs(a_ani)
+                            j_kin_ani = self.j_kin_draw_composite(
+                                kwargs_anisotropy, g_in, log_m2l, special_kwargs_lens_light=special_kwargs_lens_light, no_error=True
+                            )
+                            for m, j_kin in enumerate(j_kin_ani):
+                                ani_scaling_grid_list[m][i, k, l] = j_kin / j_ani_0[m]
         else:
             raise ValueError("anisotropy model %s not valid." % self._anisotropy_model)
         return ani_scaling_grid_list
