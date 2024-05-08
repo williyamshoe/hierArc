@@ -84,6 +84,8 @@ class ParameterScalingIFU(object):
                 self._dim_scaling = 1
 
             if anisotropy_model in ["OM", "const"]:
+                print(param_arrays[3])
+                print("____________________________")
                 if self._dim_scaling == 1:
                     self._ani_param_min = np.min(param_arrays)
                     self._ani_param_max = np.max(param_arrays)
