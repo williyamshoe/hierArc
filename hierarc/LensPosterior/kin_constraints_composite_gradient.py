@@ -264,7 +264,7 @@ class KinConstraintsCompositeGradient(KinConstraints):
                     center_x,
                     center_y,
                 ) = self._light_profile_analysis.multi_gaussian_decomposition(
-                    self.orig_kwargs_lens_light, r_h=self.orig_r_eff, m2l_grad=m2l_grad,
+                    self.orig_kwargs_lens_light, r_h=self.orig_r_eff, m2l_grad=np.mean(self.m2l_gradient_array),
                     **self.orig_kwargs_mge_light
                 )
 
