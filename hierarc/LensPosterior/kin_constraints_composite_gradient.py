@@ -507,6 +507,10 @@ class KinConstraintsCompositeGradient(KinConstraints):
                                 )
 
                                 special_kwargs_lens_light = {"amp": amps, "sigma": sigmas}
+
+                                print(special_kwargs_lens_light)
+                                print("___________________________________________")
+
                                 m2l_grads_params[m2l_grad] = copy.deepcopy(special_kwargs_lens_light)
 
                             kwargs_anisotropy = self.anisotropy_kwargs(a_ani)
