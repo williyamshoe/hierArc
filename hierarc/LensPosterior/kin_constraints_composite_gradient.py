@@ -433,11 +433,23 @@ class KinConstraintsCompositeGradient(KinConstraints):
         :return: anisotropy scaling grid along the axes defined by ani_param_array
         """
         if self._is_m2l_population_level:
+            (
+                amps,
+                sigmas,
+                center_x,
+                center_y,
+            ) = self._light_profile_analysis.multi_gaussian_decomposition(
+                self.orig_kwargs_lens_light, r_h=self.orig_r_eff, m2l_grad=np.mean(self.m2l_gradient_array),
+                **self.orig_kwargs_mge_light
+            )
+
+            special_kwargs_lens_light = {"amp": np.array(amps), "sigma": np.array(sigmas)}
+
             j_ani_0 = self.j_kin_draw_composite(
                 self.kwargs_anisotropy_base,
                 np.mean(self.gamma_in_array),
-                np.mean(self.m2l_gradient_array),
                 np.mean(self.log_m2l_array),
+                special_kwargs_lens_light=special_kwargs_lens_light,
                 no_error=True,
             )
             return self._anisotropy_scaling_relative(j_ani_0)
