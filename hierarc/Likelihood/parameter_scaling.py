@@ -84,8 +84,6 @@ class ParameterScalingIFU(object):
                 self._dim_scaling = 1
 
             if anisotropy_model in ["OM", "const"]:
-                print(param_arrays[3])
-                print("____________________________")
                 if self._dim_scaling == 1:
                     self._ani_param_min = np.min(param_arrays)
                     self._ani_param_max = np.max(param_arrays)
@@ -219,7 +217,7 @@ class ParameterScalingIFU(object):
                 or log_m2l_draw > self._log_m2l_max
             ):
                 return self.draw_lens_parameters(
-                    gamma_in, gamma_in_sigma, log_m2l, log_m2l_sigma
+                    gamma_in, gamma_in_sigma, log_m2l, log_m2l_sigma, m2l_grad, m2l_grad_sigma
                 )
 
             return gamma_in_draw, log_m2l_draw
