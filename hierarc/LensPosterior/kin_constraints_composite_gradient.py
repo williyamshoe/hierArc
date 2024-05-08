@@ -258,12 +258,24 @@ class KinConstraintsCompositeGradient(KinConstraints):
         )  # matrix that contains the sampled J() distribution
         for i in range(num_sample_model):
             if self._is_m2l_population_level:
+                (
+                    amps,
+                    sigmas,
+                    center_x,
+                    center_y,
+                ) = self._light_profile_analysis.multi_gaussian_decomposition(
+                    self.orig_kwargs_lens_light, r_h=self.orig_r_eff, m2l_grad=m2l_grad,
+                    **self.orig_kwargs_mge_light
+                )
+
+                special_kwargs_lens_light = {"amp": np.array(amps), "sigma": np.array(sigmas)}
+
                 j_kin = self.j_kin_draw_composite(
                     self.kwargs_anisotropy_base,
                     np.mean(self.gamma_in_array),
                     np.mean(self.log_m2l_array),
-                    np.mean(self.m2l_gradient_array),
                     no_error=False,
+                    special_kwargs_lens_light=special_kwargs_lens_light
                 )
             else:
                 j_kin = self.j_kin_draw_composite_m2l(
@@ -506,10 +518,7 @@ class KinConstraintsCompositeGradient(KinConstraints):
                                     **self.orig_kwargs_mge_light
                                 )
 
-                                special_kwargs_lens_light = {"amp": amps, "sigma": sigmas}
-
-                                print(special_kwargs_lens_light)
-                                print("___________________________________________")
+                                special_kwargs_lens_light = {"amp": np.array(amps), "sigma": np.array(sigmas)}
 
                                 m2l_grads_params[m2l_grad] = copy.deepcopy(special_kwargs_lens_light)
 
@@ -518,7 +527,7 @@ class KinConstraintsCompositeGradient(KinConstraints):
                                 kwargs_anisotropy, g_in, log_m2l, special_kwargs_lens_light=special_kwargs_lens_light, no_error=True
                             )
                             for m, j_kin in enumerate(j_kin_ani):
-                                ani_scaling_grid_list[m][i, k, l] = j_kin / j_ani_0[m]
+                                ani_scaling_grid_list[m][i, k, l, h] = j_kin / j_ani_0[m]
         else:
             raise ValueError("anisotropy model %s not valid." % self._anisotropy_model)
         return ani_scaling_grid_list
