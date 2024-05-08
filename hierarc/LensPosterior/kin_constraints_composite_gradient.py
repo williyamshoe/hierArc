@@ -262,7 +262,7 @@ class KinConstraintsCompositeGradient(KinConstraints):
                     self.kwargs_anisotropy_base,
                     np.mean(self.gamma_in_array),
                     np.mean(self.log_m2l_array),
-                    np.mean(self.m2l_gradient),
+                    np.mean(self.m2l_gradient_array),
                     no_error=False,
                 )
             else:
