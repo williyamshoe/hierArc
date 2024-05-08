@@ -111,12 +111,12 @@ class KinConstraintsCompositeGradient(KinConstraints):
                 kwargs_lens_light, r_h=r_eff, **kwargs_mge_light
             )
 
+            self.orig_kwargs_lens_light = copy.deepcopy(kwargs_lens_light)
+            self.orig_r_eff = r_eff
+            self.orig_kwargs_mge_light = copy.deepcopy(kwargs_mge_light)
+
             lens_light_model_list = ["MULTI_GAUSSIAN"]
             kwargs_lens_light = [{"amp": amps, "sigma": sigmas}]
-
-        self.orig_kwargs_lens_light = copy.deepcopy(kwargs_lens_light)
-        self.orig_r_eff = r_eff
-        self.orig_kwargs_mge_light = copy.deepcopy(kwargs_mge_light)
 
         lens_model_list = ["GNFW", "MULTI_GAUSSIAN_KAPPA"]
 
