@@ -215,12 +215,14 @@ class ParameterScalingIFU(object):
                 or gamma_in_draw > self._gamma_in_max
                 or log_m2l_draw < self._log_m2l_min
                 or log_m2l_draw > self._log_m2l_max
+                or m2l_grad_draw < self._m2l_grad_min
+                or m2l_grad_draw > self._m2l_grad_max
             ):
                 return self.draw_lens_parameters(
                     gamma_in, gamma_in_sigma, log_m2l, log_m2l_sigma, m2l_grad, m2l_grad_sigma
                 )
 
-            return gamma_in_draw, log_m2l_draw
+            return gamma_in_draw, log_m2l_draw, m2l_grad_draw
 
         else:
             if gamma_in < self._gamma_in_min or gamma_in > self._gamma_in_max:
