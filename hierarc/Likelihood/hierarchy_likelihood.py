@@ -503,6 +503,8 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         log_m2l=1,
         log_m2l_sigma=0,
         alpha_log_m2l=0,
+        m2l_grad=-0.1,
+        m2l_grad_sigma=0,
     ):
         """Draws a realization of a specific model from the hyper-parameter
         distribution.
