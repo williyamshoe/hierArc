@@ -37,6 +37,9 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         kwargs_lens_properties=None,
         gamma_in_prior_mean=None,
         gamma_in_prior_std=None,
+        eta_prior_mean=None,
+        eta_prior_std=None,
+        eta_prior_do=False,
         **kwargs_likelihood
     ):
         """
@@ -160,6 +163,10 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
 
         self._gamma_in_prior_mean = gamma_in_prior_mean
         self._gamma_in_prior_std = gamma_in_prior_std
+
+        self._eta_prior_mean = eta_prior_mean
+        self._eta_prior_std = eta_prior_std
+        self._eta_prior_do = eta_prior_do
 
     def lens_log_likelihood(
         self, cosmo, kwargs_lens=None, kwargs_kin=None, kwargs_source=None
@@ -311,16 +318,28 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         ):
             if self._gamma_in_array is not None and self._log_m2l_array is not None:
                 lnlikelihood -= (
-                    self._gamma_in_prior_mean - scaling_param_array[-2]
+                    self._gamma_in_prior_mean - scaling_param_array[-3]
                 ) ** 2 / (2 * self._gamma_in_prior_std**2) + np.log(
                     self._gamma_in_prior_std * (2 * np.pi) ** 0.5
                 )
             elif self._gamma_in_array is not None and self._log_m2l_array is None:
                 lnlikelihood -= (
-                    self._gamma_in_prior_mean - scaling_param_array[-1]
+                    self._gamma_in_prior_mean - scaling_param_array[-2]
                 ) ** 2 / (2 * self._gamma_in_prior_std**2) + np.log(
                     self._gamma_in_prior_std * (2 * np.pi) ** 0.5
                 )
+
+        if (
+            self._eta_prior_mean is not None
+            and self._eta_prior_std is not None
+            and self._eta_prior_do is True
+        ):
+            temp = np.log10(-1*scaling_param_array[-1])
+            lnlikelihood -= (
+                self._eta_prior_mean - temp
+            ) ** 2 / (2 * self._eta_prior_std**2) + np.log(
+                self._eta_prior_std * (2 * np.pi) ** 0.5
+            )
 
         if self._kappa_marginalize_pdf is True and self._kappa_pdf_trunc is not None:
             lnlikelihood += np.log(
