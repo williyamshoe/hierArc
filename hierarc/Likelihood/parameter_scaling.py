@@ -209,8 +209,6 @@ class ParameterScalingIFU(object):
             m2l_grad_draw_d = np.random.normal(m2l_grad, m2l_grad_sigma)
             m2l_grad_draw = -1*(10**m2l_grad_draw_d)
 
-            print((m2l_grad_draw_d, m2l_grad_draw))
-
             gamma_in_draw = np.random.normal(gamma_in, gamma_in_sigma)
             log_m2l_draw = np.random.normal(log_m2l, log_m2l_sigma)
 
