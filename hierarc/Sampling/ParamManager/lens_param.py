@@ -156,7 +156,7 @@ class LensParam(object):
                         else:
                             list.append(r"$\sigma(\est_{\rm stars})$")
                     else:
-                        list.append("log_m2l_sigma")
+                        list.append("m2l_grad_sigma")
 
         if self._kappa_ext_sampling is True:
             if "kappa_ext" not in self._kwargs_fixed:
