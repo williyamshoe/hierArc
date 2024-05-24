@@ -154,7 +154,7 @@ class LensParam(object):
                         if self._log_scatter is True:
                             list.append(r"$\sigma(\eta_{\rm stars})$")
                         else:
-                            list.append(r"$\sigma(\est_{\rm stars})$")
+                            list.append(r"$\sigma(\eta_{\rm stars})$")
                     else:
                         list.append("m2l_grad_sigma")
 
