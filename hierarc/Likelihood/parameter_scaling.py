@@ -207,9 +207,9 @@ class ParameterScalingIFU(object):
             #     )
 
             m2l_grad_draw_d = np.random.normal(m2l_grad, m2l_grad_sigma)
-            while m2l_grad_draw_d < 0:
-                m2l_grad_draw_d = np.random.normal(m2l_grad, m2l_grad_sigma)
-            m2l_grad_draw = -1*m2l_grad_draw_d
+            # while m2l_grad_draw_d < 0:
+            #     m2l_grad_draw_d = np.random.normal(m2l_grad, m2l_grad_sigma)
+            m2l_grad_draw = m2l_grad_draw_d
 
             # print((m2l_grad_draw_d, m2l_grad_draw))
 
