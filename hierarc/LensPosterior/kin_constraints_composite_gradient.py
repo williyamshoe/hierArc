@@ -34,6 +34,8 @@ class KinConstraintsCompositeGradient(KinConstraints):
         gamma_in_prior_std=None,
         eta_prior_mean=None,
         eta_prior_std=None,
+        log_upsilon_prior_mean=None,
+        log_upsilon_prior_std=None,
         sigma_v_error_independent=None,
         sigma_v_error_covariant=None,
         sigma_v_error_cov_matrix=None,
@@ -173,6 +175,9 @@ class KinConstraintsCompositeGradient(KinConstraints):
 
         self._eta_prior_mean = eta_prior_mean
         self._eta_prior_std = eta_prior_std
+
+        self._log_upsilon_prior_mean = log_upsilon_prior_mean
+        self._log_upsilon_prior_std = log_upsilon_prior_std
 
         if not is_m2l_population_level and not self._check_arrays(
             self._kappa_s_array, log_m2l_array
@@ -428,6 +433,8 @@ class KinConstraintsCompositeGradient(KinConstraints):
             "gamma_in_prior_std": self._gamma_in_prior_std,
             "eta_prior_mean": self._eta_prior_mean,
             "eta_prior_std": self._eta_prior_std,
+            "log_upsilon_prior_mean": self._log_upsilon_prior_mean,
+            "log_upsilon_prior_std": self._log_upsilon_prior_std,
         }
 
         if not self._is_m2l_population_level:

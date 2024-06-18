@@ -40,6 +40,9 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         eta_prior_mean=None,
         eta_prior_std=None,
         eta_prior_do=False,
+        log_upsilon_prior_mean=None,
+        log_upsilon_prior_std=None,
+        log_upsilon_prior_do=False,
         **kwargs_likelihood
     ):
         """
@@ -167,6 +170,10 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         self._eta_prior_mean = eta_prior_mean
         self._eta_prior_std = eta_prior_std
         self._eta_prior_do = eta_prior_do
+
+        self._log_upsilon_prior_mean = log_upsilon_prior_mean
+        self._log_upsilon_prior_std = log_upsilon_prior_std
+        self._log_upsilon_prior_do = log_upsilon_prior_do
 
     def lens_log_likelihood(
         self, cosmo, kwargs_lens=None, kwargs_kin=None, kwargs_source=None
@@ -339,6 +346,17 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
                 self._eta_prior_mean - temp
             ) ** 2 / (2 * self._eta_prior_std**2) + np.log(
                 self._eta_prior_std * (2 * np.pi) ** 0.5
+            )
+
+        if (
+            self._log_upsilon_prior_mean is not None
+            and self._log_upsilon_prior_std is not None
+            and self._log_upsilon_prior_do is True
+        ):
+            lnlikelihood -= (
+                self._log_upsilon_prior_mean - scaling_param_array[-2]
+            ) ** 2 / (2 * self._log_upsilon_prior_std**2) + np.log(
+                self._log_upsilon_prior_std * (2 * np.pi) ** 0.5
             )
 
         if self._kappa_marginalize_pdf is True and self._kappa_pdf_trunc is not None:
