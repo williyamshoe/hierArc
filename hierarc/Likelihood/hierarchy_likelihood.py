@@ -550,6 +550,7 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         gamma_in=1,
         gamma_in_sigma=0,
         alpha_gamma_in=0,
+        beta_gamma_in=0,
         log_m2l=1,
         log_m2l_sigma=0,
         alpha_log_m2l=0,
