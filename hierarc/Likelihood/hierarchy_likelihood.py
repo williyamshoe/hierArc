@@ -408,6 +408,7 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         log_m2l=1,
         log_m2l_sigma=0,
         alpha_log_m2l=0,
+        beta_log_m2l=0,
         m2l_grad=-0.1,
         m2l_grad_sigma=0,
     ):
@@ -446,7 +447,7 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
             gamma_in_draw, log_m2l_draw, m2l_grad_draw = self.draw_lens_parameters(
                 gamma_in + alpha_gamma_in * self._lambda_scaling_property + beta_gamma_in * lspb,
                 gamma_in_sigma,
-                log_m2l + alpha_log_m2l * self._lambda_scaling_property,
+                log_m2l + alpha_log_m2l * self._lambda_scaling_property + beta_log_m2l * lspb,
                 log_m2l_sigma,
                 m2l_grad,
                 m2l_grad_sigma,
@@ -557,6 +558,7 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         log_m2l=1,
         log_m2l_sigma=0,
         alpha_log_m2l=0,
+        beta_log_m2l=0,
         m2l_grad=-0.1,
         m2l_grad_sigma=0,
     ):

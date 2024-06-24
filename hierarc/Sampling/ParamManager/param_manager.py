@@ -31,6 +31,7 @@ class ParamManager(object):
         alpha_gamma_in_sampling=False,
         beta_gamma_in_sampling=False,
         alpha_log_m2l_sampling=False,
+        beta_log_m2l_sampling=False,
         sigma_v_systematics=False,
         sne_apparent_m_sampling=False,
         sne_distribution="GAUSSIAN",
@@ -113,6 +114,7 @@ class ParamManager(object):
             alpha_gamma_in_sampling=alpha_gamma_in_sampling,
             beta_gamma_in_sampling=beta_gamma_in_sampling,
             alpha_log_m2l_sampling=alpha_log_m2l_sampling,
+            beta_log_m2l_sampling=alpha_log_m2l_sampling,
             log_scatter=log_scatter,
             kwargs_fixed=kwargs_fixed_lens,
         )

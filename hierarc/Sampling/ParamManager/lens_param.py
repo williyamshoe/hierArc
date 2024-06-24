@@ -25,6 +25,8 @@ class LensParam(object):
         beta_gamma_in_sampling=False,
 
         alpha_log_m2l_sampling=False,
+        beta_log_m2l_sampling=False,
+
         kwargs_fixed=None,
         log_scatter=False,
     ):
@@ -72,6 +74,7 @@ class LensParam(object):
         self._alpha_gamma_in_sampling = alpha_gamma_in_sampling
         self._beta_gamma_in_sampling = beta_gamma_in_sampling
         self._alpha_log_m2l_sampling = alpha_log_m2l_sampling
+        self._beta_log_m2l_sampling = beta_log_m2l_sampling
 
         self._log_scatter = log_scatter
         if kwargs_fixed is None:
@@ -218,6 +221,12 @@ class LensParam(object):
                     list.append(r"$\alpha_{\Upsilon_{\rm stars}}$")
                 else:
                     list.append("alpha_log_m2l")
+        if self._beta_log_m2l_sampling is True:
+            if "beta_log_m2l" not in self._kwargs_fixed:
+                if latex_style is True:
+                    list.append(r"$\beta_{\Upsilon_{\rm stars}}$")
+                else:
+                    list.append("beta_log_m2l")
         return list
 
     def args2kwargs(self, args, i=0):
@@ -362,6 +371,12 @@ class LensParam(object):
             else:
                 kwargs["alpha_log_m2l"] = args[i]
                 i += 1
+        if self._beta_log_m2l_sampling is True:
+            if "beta_log_m2l" in self._kwargs_fixed:
+                kwargs["beta_log_m2l"] = self._kwargs_fixed["beta_log_m2l"]
+            else:
+                kwargs["beta_log_m2l"] = args[i]
+                i += 1
 
         return kwargs, i
 
@@ -448,4 +463,7 @@ class LensParam(object):
         if self._alpha_log_m2l_sampling is True:
             if "alpha_log_m2l" not in self._kwargs_fixed:
                 args.append(kwargs["alpha_log_m2l"])
+        if self._beta_log_m2l_sampling is True:
+            if "beta_log_m2l" not in self._kwargs_fixed:
+                args.append(kwargs["beta_log_m2l"])
         return args
