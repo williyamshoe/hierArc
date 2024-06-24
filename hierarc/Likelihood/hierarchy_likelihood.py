@@ -33,6 +33,8 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         mst_ifu=False,
         lambda_scaling_property=0,
         lambda_scaling_property_beta=0,
+        lambda_scaling_property_beta_mean=0,
+        lambda_scaling_property_beta_std=0,
         normalized=True,
         kwargs_lens_properties=None,
         gamma_in_prior_mean=None,
@@ -160,6 +162,10 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
 
         self._lambda_scaling_property = lambda_scaling_property
         self._lambda_scaling_property_beta = lambda_scaling_property_beta
+
+        self._lambda_scaling_property_beta_mean = lambda_scaling_property_beta_mean
+        self._lambda_scaling_property_beta_std = lambda_scaling_property_beta_std
+
         self._gamma_in_array = gamma_in_array
         self._log_m2l_array = log_m2l_array
         self._m2l_gradient_array = m2l_gradient_array
@@ -398,6 +404,7 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         gamma_in=1,
         gamma_in_sigma=0,
         alpha_gamma_in=0,
+        beta_gamma_in=0,
         log_m2l=1,
         log_m2l_sigma=0,
         alpha_log_m2l=0,
@@ -433,8 +440,11 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         :return: draw from the distributions
         """
         if self._gamma_in_array is not None and self._log_m2l_array is not None:
+
+            lspb = np.random.normal(self._lambda_scaling_property_beta_mean, self._lambda_scaling_property_beta_std)
+
             gamma_in_draw, log_m2l_draw, m2l_grad_draw = self.draw_lens_parameters(
-                gamma_in + alpha_gamma_in * self._lambda_scaling_property,
+                gamma_in + alpha_gamma_in * self._lambda_scaling_property + beta_gamma_in * lspb,
                 gamma_in_sigma,
                 log_m2l + alpha_log_m2l * self._lambda_scaling_property,
                 log_m2l_sigma,
@@ -444,8 +454,11 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
             return gamma_in_draw, log_m2l_draw, m2l_grad_draw
 
         elif self._gamma_in_array is not None and self._log_m2l_array is None:
+
+            lspb = np.random.normal(self._lambda_scaling_property_beta_mean, self._lambda_scaling_property_beta_std)
+
             gamma_in_draw = self.draw_lens_parameters(
-                gamma_in + alpha_gamma_in * self._lambda_scaling_property,
+                gamma_in + alpha_gamma_in * self._lambda_scaling_property + beta_gamma_in * lspb,
                 gamma_in_sigma,
             )
             return gamma_in_draw

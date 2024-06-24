@@ -20,7 +20,10 @@ class LensParam(object):
         kappa_ext_distribution="NONE",
         alpha_lambda_sampling=False,
         beta_lambda_sampling=False,
+
         alpha_gamma_in_sampling=False,
+        beta_gamma_in_sampling=False,
+
         alpha_log_m2l_sampling=False,
         kwargs_fixed=None,
         log_scatter=False,
@@ -67,6 +70,7 @@ class LensParam(object):
         self._alpha_lambda_sampling = alpha_lambda_sampling
         self._beta_lambda_sampling = beta_lambda_sampling
         self._alpha_gamma_in_sampling = alpha_gamma_in_sampling
+        self._beta_gamma_in_sampling = beta_gamma_in_sampling
         self._alpha_log_m2l_sampling = alpha_log_m2l_sampling
 
         self._log_scatter = log_scatter
@@ -202,6 +206,12 @@ class LensParam(object):
                     list.append(r"$\alpha_{\gamma_{\rm in}}$")
                 else:
                     list.append("alpha_gamma_in")
+        if self._beta_gamma_in_sampling is True:
+            if "beta_gamma_in" not in self._kwargs_fixed:
+                if latex_style is True:
+                    list.append(r"$\beta_{\gamma_{\rm in}}$")
+                else:
+                    list.append("beta_gamma_in")
         if self._alpha_log_m2l_sampling is True:
             if "alpha_log_m2l" not in self._kwargs_fixed:
                 if latex_style is True:
@@ -340,6 +350,12 @@ class LensParam(object):
             else:
                 kwargs["alpha_gamma_in"] = args[i]
                 i += 1
+        if self._beta_gamma_in_sampling is True:
+            if "beta_gamma_in" in self._kwargs_fixed:
+                kwargs["beta_gamma_in"] = self._kwargs_fixed["beta_gamma_in"]
+            else:
+                kwargs["beta_gamma_in"] = args[i]
+                i += 1
         if self._alpha_log_m2l_sampling is True:
             if "alpha_log_m2l" in self._kwargs_fixed:
                 kwargs["alpha_log_m2l"] = self._kwargs_fixed["alpha_log_m2l"]
@@ -426,6 +442,9 @@ class LensParam(object):
         if self._alpha_gamma_in_sampling is True:
             if "alpha_gamma_in" not in self._kwargs_fixed:
                 args.append(kwargs["alpha_gamma_in"])
+        if self._beta_gamma_in_sampling is True:
+            if "beta_gamma_in" not in self._kwargs_fixed:
+                args.append(kwargs["beta_gamma_in"])
         if self._alpha_log_m2l_sampling is True:
             if "alpha_log_m2l" not in self._kwargs_fixed:
                 args.append(kwargs["alpha_log_m2l"])
