@@ -451,6 +451,7 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
                 m2l_grad,
                 m2l_grad_sigma,
             )
+            print((lspb, beta_gamma_in, gamma_in_draw))
             return gamma_in_draw, log_m2l_draw, m2l_grad_draw
 
         elif self._gamma_in_array is not None and self._log_m2l_array is None:
@@ -461,6 +462,8 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
                 gamma_in + alpha_gamma_in * self._lambda_scaling_property + beta_gamma_in * lspb,
                 gamma_in_sigma,
             )
+
+            print((lspb, beta_gamma_in, gamma_in_draw))
             return gamma_in_draw
 
         else:
