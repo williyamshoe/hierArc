@@ -154,14 +154,26 @@ class GoodnessOfFit(object):
         for i, kwargs_likelihood in enumerate(self._kwargs_likelihood_list):
             name = kwargs_likelihood.get("name", "lens " + str(i))
             likelihood = self._sample_likelihood._lens_list[i]
-            (
-                sigma_v_measurement,
-                cov_error_measurement,
-                sigma_v_predict_mean,
-                cov_error_predict,
-            ) = likelihood.sigma_v_measured_vs_predict(
-                cosmo, kwargs_lens=kwargs_lens, kwargs_kin=kwargs_kin
-            )
+
+            good = False
+            for _ in np.arange(200):
+                try:
+                    (
+                        sigma_v_measurement,
+                        cov_error_measurement,
+                        sigma_v_predict_mean,
+                        cov_error_predict,
+                    ) = likelihood.sigma_v_measured_vs_predict(
+                        cosmo, kwargs_lens=kwargs_lens, kwargs_kin=kwargs_kin
+                    )
+                except ValueError:
+                    continue
+                good = True
+                break
+            if not good:
+                raise ValueError(
+                    "It still failed???"
+                )
 
             if sigma_v_measurement is not None:
                 num = len(sigma_v_measurement)
