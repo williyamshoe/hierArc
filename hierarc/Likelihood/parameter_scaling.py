@@ -197,7 +197,7 @@ class ParameterScalingIFU(object):
                     "gamma_in parameter is out of bounds of the interpolated range!"
                 )
             if log_m2l < self._log_m2l_min or log_m2l > self._log_m2l_max:
-                print((log_m2l, self._log_m2l_min, self._log_m2l_max))
+                # print((log_m2l, self._log_m2l_min, self._log_m2l_max))
                 raise ValueError(
                     "m2l parameter is out of bounds of the interpolated range!"
                 )

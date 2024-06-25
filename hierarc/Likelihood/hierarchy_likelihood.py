@@ -444,6 +444,8 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
 
             lspb = np.random.normal(self._lambda_scaling_property_beta_mean, self._lambda_scaling_property_beta_std)
 
+            print((log_m2l, alpha_log_m2l, beta_log_m2l, self._lambda_scaling_property, lspb))
+
             gamma_in_draw, log_m2l_draw, m2l_grad_draw = self.draw_lens_parameters(
                 gamma_in + alpha_gamma_in * self._lambda_scaling_property + beta_gamma_in * lspb,
                 gamma_in_sigma,
