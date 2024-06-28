@@ -445,6 +445,8 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         if self._gamma_in_array is not None and self._log_m2l_array is not None:
 
             lspb = np.random.normal(self._lambda_scaling_property_beta_mean, self._lambda_scaling_property_beta_std)
+            while lspb <= 0:
+                lspb = np.random.normal(self._lambda_scaling_property_beta_mean, self._lambda_scaling_property_beta_std)
             lspb = np.log10(lspb) - self._lambda_scaling_property_beta_norm
 
             # print((log_m2l, alpha_log_m2l, beta_log_m2l, self._lambda_scaling_property, lspb))
@@ -463,6 +465,8 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         elif self._gamma_in_array is not None and self._log_m2l_array is None:
 
             lspb = np.random.normal(self._lambda_scaling_property_beta_mean, self._lambda_scaling_property_beta_std)
+            while lspb <= 0:
+                lspb = np.random.normal(self._lambda_scaling_property_beta_mean, self._lambda_scaling_property_beta_std)
             lspb = np.log10(lspb) - self._lambda_scaling_property_beta_norm
 
             gamma_in_draw = self.draw_lens_parameters(
