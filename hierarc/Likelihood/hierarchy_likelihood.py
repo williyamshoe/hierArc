@@ -381,11 +381,18 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         :return: array of anisotropy parameter scaling
         """
         ani_param = self.draw_anisotropy(**kwargs_kin)
+
+        svse = 0
+        if "sigma_v_sys_error" in kwargs_kin:
+            svse = kwargs_kin["sigma_v_sys_error"]
+        kl = copy.deepcopy(kwargs_lens)
+        kl["sigma_v_sys_error"] = svse
+
         if self._gamma_in_array is not None and self._log_m2l_array is not None:
-            gamma_in, log_m2l, m2l_gradient = self.draw_lens_scaling_params(**kwargs_lens)
+            gamma_in, log_m2l, m2l_gradient = self.draw_lens_scaling_params(**kl)
             return np.concatenate([ani_param, [gamma_in, log_m2l, m2l_gradient]])
         elif self._gamma_in_array is not None and self._log_m2l_array is None:
-            gamma_in = self.draw_lens_scaling_params(**kwargs_lens)
+            gamma_in = self.draw_lens_scaling_params(**kl)
             return np.concatenate([ani_param, [gamma_in]])
         else:
             return ani_param
@@ -413,6 +420,7 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         beta_log_m2l=0,
         m2l_grad=-0.1,
         m2l_grad_sigma=0,
+        sigma_v_sys_error=0,
     ):
         """Draws a realization of the anisotropy parameter scaling from the
         distribution.
@@ -444,9 +452,13 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         """
         if self._gamma_in_array is not None and self._log_m2l_array is not None:
 
-            lspb = np.random.normal(self._lambda_scaling_property_beta_mean, self._lambda_scaling_property_beta_std)
+            lspb = np.random.normal(self._lambda_scaling_property_beta_mean,
+                                    (self._lambda_scaling_property_beta_std**2 + (
+                                        sigma_v_sys_error*self._lambda_scaling_property_beta_mean)**2)**0.5)
             while lspb <= 0:
-                lspb = np.random.normal(self._lambda_scaling_property_beta_mean, self._lambda_scaling_property_beta_std)
+                lspb = np.random.normal(self._lambda_scaling_property_beta_mean,
+                                        (self._lambda_scaling_property_beta_std ** 2 + (
+                                                sigma_v_sys_error * self._lambda_scaling_property_beta_mean) ** 2) ** 0.5)
             lspb = np.log10(lspb) - self._lambda_scaling_property_beta_norm
 
             # print((log_m2l, alpha_log_m2l, beta_log_m2l, self._lambda_scaling_property, lspb))
