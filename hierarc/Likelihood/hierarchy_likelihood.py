@@ -46,6 +46,7 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         log_upsilon_prior_mean=None,
         log_upsilon_prior_std=None,
         log_upsilon_prior_do=False,
+        sdss_vd=False,
         **kwargs_likelihood
     ):
         """
@@ -171,6 +172,8 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         self._gamma_in_array = gamma_in_array
         self._log_m2l_array = log_m2l_array
         self._m2l_gradient_array = m2l_gradient_array
+
+        self._sdss_vd = sdss_vd
 
         self._gamma_in_prior_mean = gamma_in_prior_mean
         self._gamma_in_prior_std = gamma_in_prior_std
@@ -383,7 +386,7 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         ani_param = self.draw_anisotropy(**kwargs_kin)
 
         svse = 0
-        if "sigma_v_sys_error" in kwargs_kin:
+        if "sigma_v_sys_error" in kwargs_kin and self._sdss_vd:
             svse = kwargs_kin["sigma_v_sys_error"]
         kl = copy.deepcopy(kwargs_lens)
         kl["sigma_v_sys_error"] = svse
