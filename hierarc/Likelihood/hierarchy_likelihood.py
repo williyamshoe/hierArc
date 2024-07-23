@@ -43,6 +43,7 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
         eta_prior_mean=None,
         eta_prior_std=None,
         eta_prior_do=False,
+        sigma_v_sys_error_loguniform=False,
         log_upsilon_prior_mean=None,
         log_upsilon_prior_std=None,
         log_upsilon_prior_do=False,
@@ -177,6 +178,8 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
 
         self._gamma_in_prior_mean = gamma_in_prior_mean
         self._gamma_in_prior_std = gamma_in_prior_std
+
+        self._sigma_v_sys_error_loguniform = sigma_v_sys_error_loguniform
 
         self._eta_prior_mean = eta_prior_mean
         self._eta_prior_std = eta_prior_std
@@ -374,6 +377,9 @@ class LensLikelihood(TransformedCosmography, LensLikelihoodBase, ParameterScalin
             lnlikelihood += np.log(
                 np.interp(kappa_ext, self._kappa_bin_edges_trunc, self._kappa_pdf_trunc)
             )
+
+        if self._sigma_v_sys_error_loguniform and sigma_v_sys_error is not None and sigma_v_sys_error > 0:
+            lnlikelihood += np.log(1 / sigma_v_sys_error)
 
         return np.nan_to_num(lnlikelihood)
 
