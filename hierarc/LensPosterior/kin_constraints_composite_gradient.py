@@ -122,7 +122,7 @@ class KinConstraintsCompositeGradient(KinConstraints):
             lens_light_model_list = ["MULTI_GAUSSIAN"]
             kwargs_lens_light = [{"amp": amps, "sigma": sigmas}]
 
-        lens_model_list = ["GNFW", "MULTI_GAUSSIAN_KAPPA"]
+        lens_model_list = ["GNFW", "MULTI_GAUSSIAN"]
 
         super(KinConstraintsCompositeGradient, self).__init__(
             z_lens,
